@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Prakiraan Cuaca 3 Hari - Klojen</title>
+  <style>
+    body {
+      background-color: #f9f9f9;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+    }
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 90%;
+      max-width: 700px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Prakiraan Cuaca 3 Hari di Klojen</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Suhu Maks (°C)</th>
+          <th>Suhu Min (°C)</th>
+          <th>Hujan (mm)</th>
+          <th>Peluang Hujan (%)</th>
+        </tr>
+      </thead>
+      <tbody id="cuaca-body">
+
+      </tbody>
+    </table>
+    <div class="footer">
+      Dibuat untuk tugas praktek API - Cuaca Klojen 2025
+    </div>
+  </div>
+
+  <script>
+    const apiURL = "https://api.open-meteo.com/v1/forecast?latitude=-7.973&longitude=112.6087&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_mean&timezone=Asia%2FBangkok&forecast_days=3";
+
+    fetch(apiURL)
+      .then(res => res.json())
+      .then(data => {
+        const tbody = document.getElementById("cuaca-body");
+
+        const tanggal = data.daily.time;
+        const maxTemp = data.daily.temperature_2m_max;
+        const minTemp = data.daily.temperature_2m_min;
+        const hujan = data.daily.precipitation_sum;
+        const peluangHujan = data.daily.precipitation_probability_mean;
+
+        for (let i = 0; i < tanggal.length; i++) {
+          const tr = document.createElement("tr");
+
+          const kolomTanggal = `<td>${new Date(tanggal[i]).toLocaleDateString("id-ID")}</td>`;
+          const kolomMax = `<td>${maxTemp[i]}</td>`;
+          const kolomMin = `<td>${minTemp[i]}</td>`;
+          const kolomHujan = `<td>${hujan[i]}</td>`;
+          const kolomPeluang = `<td>${peluangHujan[i]}</td>`;
+
+          tr.innerHTML = kolomTanggal + kolomMax + kolomMin + kolomHujan + kolomPeluang;
+
+          tbody.appendChild(tr);
+        }
+      })
+      .catch(err => {
+        console.error("Gagal ambil data cuaca:", err);
+      });
+  </script>
+</body>
+</html>
